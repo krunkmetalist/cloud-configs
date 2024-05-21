@@ -1,6 +1,6 @@
 # ---- install docker ----
-# taken from the official docs. if these steps fail reference:
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
 # Add Docker's official GPG key:
 echo 'installing docker...'
 sudo apt-get update
@@ -63,3 +63,7 @@ systemctl restart container
 echo 'deploying kubernetes (with canal)...'
 kubeadm init --config kubeadm-config.yaml
 export KUBECONFIG=/etc/kubernetes/admin.conf
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
+kubectl apply -f canal.yaml
+
+

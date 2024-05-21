@@ -1,6 +1,6 @@
 # ---- install docker ----
-# taken from the official docs. if these steps fail reference:
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
 # Add Docker's official GPG key:
 echo 'installing docker...'
 sudo apt-get update

@@ -1,6 +1,8 @@
 # ---- install docker ----
-# taken from the official docs. if these steps fail reference: https://docs.docker.com/engine/install/ubuntu/
+# taken from the official docs. if these steps fail reference:
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 # Add Docker's official GPG key:
+echo 'installing docker...'
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -14,15 +16,18 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 
+# install the packages
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
 # ---- update and install kubeadm ----
 # turn off swap, might need to set the env var to make the setting persist
-sudo swapoff -a
+echo 'installing kubernetes...'
+sudo swapoff -a # per session
 sudo apt-get update
 # apt-transport-https may be a dummy package; if so, you can skip that package
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
 # If the directory `/etc/apt/keyrings` does not exist, it should be created before the curl command, read the note below.
-# sudo mkdir -p -m 755 /etc/apt/keyrings
 DIR=/etc/apt/keyrings
 
 if [[ ! -e $DIR ]]; then

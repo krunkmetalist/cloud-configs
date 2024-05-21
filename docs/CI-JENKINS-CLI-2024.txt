@@ -1,0 +1,33 @@
+So this new instance of jenkins is inside a containder running on the host that already has an instance running on it.
+This has made a few things a bit more challenging, but it's working out anyways.
+
+The docs on the jenkins cli are just as good as you would expect. I was able to get the cli working in around 20, 30 minutes - inside a contianer.
+
+I'm mostly noting this down for now, since I dont have a major use case outside of migrating jobs from the main instance for testing.
+
+To add a key for your jenkins user, go to:
+    <jenkins-url (w/port)>/me/configure
+
+Scroll down to the key area and paste in your key.
+Since this is in a container you have to attach to it and run a shell.
+
+    docker exec -it <container-name> <shell choice(sh|/bin/bash|bash)>
+
+    E.g.: docker exec -it test-jenkins /bin/bash
+
+Once you're inside the container with a prompt, run ssh-keygen, the output will tell you the key can be found in /var/jenkins_home/.ssh.
+Copy the key, go back to the jenkins web interface, paste in your key - save.
+
+Now you can try to auth with and call the jenkins-cli.
+
+    ssh -l <you> -p 53801 localhost help
+
+    E.g.: ssh -l nate -p 53801 localhost help
+
+Oh, a note on the port. That port has to be set in 'manage jenkins > security > SSH Server':
+    - Pick a port and stick with it.
+    - Make sure the port isnt being used on the host:
+        - lsof -i tcp:<your port>
+    - If nothing comes back, you're good to use it.
+
+When the above command comes back with a waterfall of options, you're good to go.

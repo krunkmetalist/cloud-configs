@@ -1,0 +1,42 @@
+We now have a private docker registry, which mitigates the need to pay Docker hub 7 dollars a month, woot.
+
+A registry is where we keep our proprietary images that contain sensitive information.
+Here we can push & pull images within the safety of our network.
+
+The details:
+
+- ssh to the host
+
+- Host:
+
+    - when on the host, at a prompt:
+
+        docker push|pull localhost:5050/<image-name>:<version-tag>
+
+    - still working on remote access
+
+How to make one:
+
+- create a volume
+    
+    docker volume create <vol-name>
+
+- pull down the image
+
+    docker pull registry
+
+- run the image in a container
+
+    docker run -d --name registry --mount src=<vol-name>,dst=/var/lib/registry -p <free-port>:5000 registry
+
+- push an image
+
+    docker push localhost:<free-port>/php:mysqli
+
+- pull an image
+
+    docker pull localhost:<free-port>/php:mysqli
+
+- query the repo
+
+    curl http://localhost:<free-port>/v2/_catalog

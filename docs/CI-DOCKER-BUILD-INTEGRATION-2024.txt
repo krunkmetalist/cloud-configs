@@ -1,0 +1,90 @@
+ramblings on how I think this might work:
+
+Two immediate projects have my attention: 
+
+	- 1: replacing the build scripts with dockerfiles.
+		- this is a future, obviously.
+
+	- 2: hosting alex in a container.
+		- the best way to apparoach this is by performing all of these steps within the build pipeline.
+        - So, lets think about that.
+            - The build is kicked off, doesnt matter how for this exercise.
+                - The latest changes are pulled down for the source repo and the 'shared library' repo.
+                - The Jenkinsfile is detected by the multibranch pipeline 'branch indexing' routine.
+                - For PROD we perform the pre-build steps and stages.
+                    - For DEV we only call the ruby scripts to build the projects.
+                        - The resulting binaries are only kept on the local Jenkins host fs.
+                - We build the application by using a shell step to kick off the ruby scripts.
+                - If successful, the artifacts are attached to the build result under the name and number of the execution.
+                - The binaries are also uploaded to a bucket in S3, in a custom path built in the pre-build stage.
+
+                HERE IS WHERE I CAN INJECT STEPS FOR DOCKER
+
+                - Docker steps:
+                    - Build the image
+                        - consume the fresh binary, add it to the fs of the image.
+                    - Tag the image with `git rev-parse HEAD`, for a unique and contextual git SHA tag.
+                    - Push it up to private registry container on host
+                    - Types of images:
+                        - test env:
+                            - GUI
+                                - going to need browser drivers in the images.
+                                    - search for canned solutions, adjust to suit.
+                                    - Still have an image.
+                            - API
+                                - going to need to install packages in requirements.
+                                    - Had this working in 2017-ish if I recall, still have the image.
+
+                    !!!BUSHWACK!!!:
+
+                    - TO DOCKERIZE an application I need to get it into the container.
+                        - Options for that operation:
+                            - CURL:
+                                - we could side-step and just curl the binary to the container.
+                            - COPY: 
+                                - use the COPY instruction to add a literal copy of the binary to the VM's FS. I like this one.
+                                - Only does the one thing.
+                            - ADD:
+                                - Can extract compressed files from remote url's, can also copy files from the local fs into the VM's FS.
+                                - In theory, we could use this to split the processes, and just call the binaries from S3 on a different build machine, or in a new job called after the build portion on the same machine.
+                                - This might be the best way to go.
+                    - EXPOSE: next, I would need to expose any ports I know alex needs.
+                        - these ports for sure.
+                            - 8080
+                            - 6443
+                            - 443
+                            - 22
+                            - 465 
+                            - 576
+                            - 990
+                            - 21
+                            - 389
+                            - 636
+                            - 2200
+                            - 25
+                        - but this brings up an interesting question:
+                            - Where are we going to get instance/configuration information?
+                            - How to get that, and inject it into the image build?
+
+                                POSSIBLE ANSWER: 
+                                    - It could be a base image that accepts params.
+                                        - command line args?
+                                    - The 'docker run' command could consume information about the desired deployment.
+                                    - Or a compose file could be written to orchestrate those services and relationships.
+
+                                    Another idea:
+                                        - Create a small configuration splash page with fields for required data?
+                                            - Write new values to corresponding GlobalConfig.json keys.
+                                            - Restart service?
+
+                    - CMD
+                        - I need to start the application via script.
+                            - On older versions of mac os, I could use lanchctl to manipulate the service. 
+                                - On Linux and windows I need to look up the comparable commands.
+                            - Will the new installer help or hurt this process?
+                            - Will it require two runs? one to install and one to work in? time will tell.
+
+                - At this point the script is performing a cleanup of the host workspace directories.
+                - The build is done.
+
+

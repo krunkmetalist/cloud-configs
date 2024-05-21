@@ -1,0 +1,52 @@
+NOTE: This assumes you have docker desktop installed and running.
+
+Standing up a new jenkins instance has never been easier.
+
+- pull it down
+
+    docker pull jenkins/jenkins:let
+
+- run it
+
+    docker run -d --name <name-you've-chosen> --restart always --mount src=<your-volume>,dst=/var/jenkins_home -p <your-port>:8080 -p 50000:50000 jenkins/jenkins:lts
+
+    E.g.: docker run -d --name test-jenkins --restart always --mount src=test-jenkins,dst=/var/jenkins_home -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts
+
+- access it
+
+    - <yourip:port>
+
+- grab the secret password to unlock the instance
+
+    - docker exec -it <container-name> /bin/bash
+    - copy the password, paste it into the web interface.
+
+- set your username, password, and email.
+
+- welcome to your new instance.
+
+command breakdown:
+    - docker
+        - the engine
+    - run
+        - run command, runs an image with params
+    - '-d', or 'detach'
+        - you wont see output, its running in the background.
+    - name
+        - easy name, better than messing with id's.
+    - restart
+        - tells docker to keep the container up. restarts from jenkins dont crash the instance.
+    - mount
+        - the newer version of the 'volume' command.
+        - create a volume for your container:
+            - docker volume create <your-volume-name>
+        - pass the name of your volume to the 'src=' value.
+    - '-p'
+        - open port 8080, map it to port 8080 inside the container.
+            - used for general access to the service.
+    - '-p'
+        - open port 50000 for agents, map it to port 50000 inside the container.
+    - jenkins/jenkins:lts
+        - the repo / image name / tag
+
+

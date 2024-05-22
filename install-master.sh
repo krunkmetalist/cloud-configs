@@ -49,11 +49,11 @@ sudo systemctl enable --now kubelet
 # ---- configure kubeadm ----
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-kubernetesVersion: v1.21.0
+kubernetesVersion: v1.30.1
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: systemd' > kubeadm-config.yaml
+cgroupDriver: containerd' > kubeadm-config.yaml
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
 echo "SystemdCgroup = true" > /etc/containerd/config.toml

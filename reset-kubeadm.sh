@@ -26,6 +26,9 @@ sudo rm -rf /var/lib/kubelet/pki/
 sudo rm -rf /var/lib/cni/
 sudo rm -rf /etc/cni/net.d/
 
+echo "Removing user's kube config"
+sudo rm -rf "$HOME"/.kube/config
+
 echo "Removing kubelet and kubectl binaries..."
 sudo rm -rf /usr/local/bin/kubeadm
 sudo rm -rf /usr/local/bin/kubelet

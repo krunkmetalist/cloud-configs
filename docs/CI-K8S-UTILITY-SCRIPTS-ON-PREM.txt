@@ -1,0 +1,110 @@
+Preface:
+All commands and executions are happening on Ubuntu nodes.
+At the time of this writing we're using Noble (24.x) for all machines, virtual or otherwise.
+    -fin-
+
+Overview:
+
+In order to administer an 'on-prem' k8s cluster we have to use an array of tools.
+These tools can be painful to install and cleanup.
+In order to ease that pain, scripts have been written that will get you most of the way there.
+Some of these workflows still require user interaction, don't 'set and forget' these things.
+I'm working on piping pre-defined choices to the commands.
+
+Scripts are broken up by two categories:
+    - Master
+    - Node
+
+Master: refers to the machine running the cluster's control plane.
+Node: refers to any machine that has joined the cluster, but is not running a control plane.
+
+NOTE: control plane: a group of processes that comprise the engine - scheduler, etcd, etc..
+See an overview here: https://kubernetes.io/docs/concepts/overview/components/
+
+The Master scripts:
+
+    - handle_master.sh
+        This one is just a wrapper for running:
+            - install-master.sh
+            - create-master-user.sh
+    - use this script when you're logged into a remote session as 'root' on your host,
+    to set up docker, k8s, and kubeadm, plus a !root user for daily driving. This will also move over
+    the configs generated from the installation process, which allows your new user to invoke the needed tools.
+
+    - install-master.sh:
+        - This is the main script - does the heavy lifting.
+
+            - Install Docker:
+                - updates the system
+                - installs certs and curl
+                - installs a keyring
+                - curls a new gpg key for docker
+                    - chmod a+r on the nw docker keyring
+                - Add the repository to Apt sources
+                - use Ubuntu's apt package manager to install Docker and dependencies.
+
+            - Install kubeadm ('cube admin')
+                - First swap must be turned off.
+                    - currently we're using the '-a' flag to disable swap, per session.
+                    - persistent options are available (future)
+                - update installed packages
+                - install some dependencies
+                - bash control flow to determine if the '/etc/apt/keyrings' dir exists
+                    - create the directory if it doesn't exist.
+                - curl a new gpg key
+                - use the new key to add the k8s apt source
+                - update all packages
+                - install:
+                    - kubeadm
+                    - kubelet
+                    - kubectl
+            - Configure Kubeadm
+                - echo out a file and write it to 'kubeadm-config.yaml'
+                    - Here you can define pod subnetworks, set the version for the k8s binary, etc.
+                    - Currently we're using k8s version 1.30.1
+                    - We're also defining a pod subnetwork for use with calico+flannel=canal.
+                        - Together they provide us with a networking plugin that implements security policies/enforcement.
+            - Set the control group (used to make system calls)
+                - set systemd as the cgroup
+                - restart containerd
+            - Perform kubeadm init
+                - apply the kubeadm-config created two steps prior.
+                    - if you don't supply the CIDR flag '--pod-network-cidr' with an IP range,
+                    then you need to define the pod subnet in your kubeadm config.
+                - remove the previous version of the canal yaml file.
+                - set a global env var pointing to the kubeadm config.
+                - curl the canal.yaml file, which is needed to stand up the pod network.
+                - apply the canal.yaml file.
+                    - bypassing validation for now.
+
+    - create-master-user.sh
+        - This script creates a:
+            - group
+            - user
+            - new user home
+        - copy ssh keys from root to new user home
+        - change ownership of home to new user
+        - add new group to sudoers
+        - create a '.kube' dir in home for the new user.
+        - copy the admin config from etc k8s to the kube dir, name it 'config' - no extension.
+            - this file is generated as part of the installation.
+        - change ownership for the config
+
+The Node scripts:
+
+    - install-node.sh
+
+        - This script does everything the master script does, except it doesn't run the 'init' command for kubeadm.
+        - nor does it apply any sort of config.
+
+    - create-node-user.sh
+
+        - Much like the previous script this is just a copy of the master counterpart with some parts withheld.
+        - This script doesn't create the kube dir, or copy over the admin config.
+            - at some point the need might arise to perform commands from within the nodes, then we can perform those steps manually.
+
+
+
+
+
+

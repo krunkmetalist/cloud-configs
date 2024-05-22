@@ -1,1 +1,28 @@
-placeholder
+Inspect your kubeconfig file:
+
+        kubectl config view
+
+Check if the Kubernetes API server is running:
+
+        sudo systemctl status kube-apiserver
+
+Check the API server logs for errors:
+
+        sudo journalctl -u kube-apiserver -n 100
+
+Ensure network connectivity to the Kubernetes API server:
+
+        curl -k https://<your-kubernetes-api-server>:6443
+
+Restart the kubelet and API server:
+
+        sudo systemctl restart kubelet
+        sudo systemctl restart kube-apiserver
+
+Verify the status of all control plane components:
+
+        sudo systemctl status kubelet
+        sudo systemctl status kube-apiserver
+        sudo systemctl status kube-controller-manager
+        sudo systemctl status kube-scheduler
+        sudo systemctl status etcd

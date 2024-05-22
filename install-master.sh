@@ -68,9 +68,8 @@ echo 'deploying kubernetes (with canal)...'
 kubeadm init --config kubeadm-config.yaml
 # without podSubnet: 'sudo kubeadm init --pod-network-cidr=192.168.0.0/16'
 
-rm canal.yaml || true
 export KUBECONFIG=/etc/kubernetes/admin.conf # if root
-curl -k https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
-kubectl apply -f canal.yaml --validate=false
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
+kubectl apply -f canal.yaml
 
 

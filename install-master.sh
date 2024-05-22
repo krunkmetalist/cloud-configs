@@ -71,7 +71,7 @@ kubeadm init --config kubeadm-config.yaml
 #  sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf # if root
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O --validate=false
 kubectl apply -f canal.yaml
 
 

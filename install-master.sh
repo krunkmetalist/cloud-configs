@@ -47,13 +47,15 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
 
 # ---- configure kubeadm ----
+# NOTE: 'kubernetesVersion' will need to be updated manually to match what got pulled, see version skew policy.
+# https://kubernetes.io/releases/version-skew-policy/#supported-versions
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
 kubernetesVersion: v1.30.1
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: containerd' > kubeadm-config.yaml
+cgroupDriver: systemd' > kubeadm-config.yaml
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
 echo "SystemdCgroup = true" > /etc/containerd/config.toml
@@ -62,7 +64,7 @@ systemctl restart containerd
 # ---- kubeadm init ----
 echo 'deploying kubernetes (with canal)...'
 kubeadm init --config kubeadm-config.yaml
-export KUBECONFIG=/etc/kubernetes/admin.conf
+export KUBECONFIG=/etc/kubernetes/admin.conf # if root
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
 kubectl apply -f canal.yaml
 

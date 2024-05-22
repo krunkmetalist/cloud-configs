@@ -1,5 +1,5 @@
 Preface:
-All commands and executions are happening on Ubuntu nodes.
+This repo is all shell scripts and configs. All commands and executions are happening on Ubuntu nodes.
 At the time of this writing we're using Noble (24.x) for all machines, virtual or otherwise.
     -fin-
 
@@ -90,6 +90,19 @@ The Master scripts:
             - this file is generated as part of the installation.
         - change ownership for the config
 
+    Aftercare:
+        - After initializing the cluster with kubeadm,
+        we need to perform a few more steps to get the tool working for the new user.
+        - In the terminal output you should see steps like this:
+            "
+            # should be performed on a !root user
+            mkdir -p $HOME/.kube
+            sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+            sudo chown $(id -u):$(id -g) $HOME/.kube/config
+            "
+        - logout if you're using a root user, log back in with your new user.
+        - perform the steps.
+
 The Node scripts:
 
     - install-node.sh
@@ -103,6 +116,27 @@ The Node scripts:
         - This script doesn't create the kube dir, or copy over the admin config.
             - at some point the need might arise to perform commands from within the nodes, then we can perform those steps manually.
 
+Notes:
+
+    - You might need to add the new user to the docker group.
+
+COMMANDS:
+
+    - This section covers commands used to ensure your installation worked, and your system is configured.
+
+        - Did my user get created?
+            - 'cut -d: -f1 /etc/passwd'
+                - your user should be there, close to the bottom.
+
+        - Did my group get created?
+            - for this we'll use 'getent', which queries 'databases(coughfilescough)' on the system, we'll be asking for the group db.
+            - 'getent group'
+                - your group should be in the list, toward the bottom.
+
+        - Did kubeadm install?
+            - go to a shell and try it
+            - 'kubeadm'
+                - if it worked you'll see a list of options printed to the screen.
 
 
 

@@ -1,4 +1,4 @@
-PD38V-7NDP6-JQ8W4-8JTRK-FRG6P# ---- install docker ----
+# ---- install docker ----
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # Add Docker's official GPG key:
@@ -57,7 +57,7 @@ cgroupDriver: systemd' > kubeadm-config.yaml
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
 echo "SystemdCgroup = true" > /etc/containerd/config.toml
-systemctl restart container
+systemctl restart containerd
 
 # ---- kubeadm init ----
 echo 'deploying kubernetes (with canal)...'

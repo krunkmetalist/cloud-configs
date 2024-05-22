@@ -1,1 +1,58 @@
-placeholder
+# find images
+docker search <my_image>
+
+# list all local images
+docker images -a
+
+# get logs for a container
+docker logs <container name/id>
+
+# build the image from a dockerfile
+docker build -t my_image_name:my_tag .
+
+######## chrome notes ###########
+
+# run a standalone chrome instance
+docker run -d -p 4444:4444 -v /dev/shm:/dev/shm selenium/standalone-chrome:3.141.59-20200525
+
+# attach to container and execute a command, in this case, open a bash terminal
+docker exec -it <container-name-or-id> bash
+
+# another example of attaching to a container
+docker run -it --entrypoint bash <image-name-or-id>
+
+# DEBUG, with vnc ports mapped
+docker run -d -p 4444:4444 -p 5900:5900 -v /dev/shm:/dev/shm selenium/standalone-chrome-debug:3.141.59-20200525
+
+#VNC PASSWORD
+# use a regular vnc viewer to connect to a debug instance
+secret
+(really, that's the password)
+
+# FIND WHATS USING MY PORT
+sudo netstat -pna | grep 5900
+
+######## DOCKER COMPOSE ##########
+# in the same file as your yaml
+## to build and run the containers specified in the yaml
+docker-compose up
+
+## to stop all containers and destroy the networks
+docker-compose down
+
+## if changes are made to an image between runs, remove the orphans
+docker-compose down --remove-orphans
+
+## find docker processes managed by docker-compose
+docker-compose ps
+
+## NOTES ON YAML
+mismatched indents will break the linter, and subsequently run time.
+Dangling arguments will also break run time.
+
+########### CLEANUP ############
+# clean up old containers
+docker rm $(docker ps -a -q)
+
+# clean up docker images
+docker rmi $(docker images | grep "^<none>" | awk "{print $3}")

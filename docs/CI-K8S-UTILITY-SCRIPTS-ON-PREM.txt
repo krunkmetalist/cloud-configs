@@ -120,7 +120,7 @@ Notes:
 
     - You might need to add the new user to the docker group.
 
-COMMANDS:
+Linux COMMANDS:
 
     - This section covers commands used to ensure your installation worked, and your system is configured.
 
@@ -137,6 +137,14 @@ COMMANDS:
             - go to a shell and try it
             - 'kubeadm'
                 - if it worked you'll see a list of options printed to the screen.
+
+        - update a users password
+            - as root:
+                - 'passwd <username>'
+
+        - add a user to a group
+            - as root:
+                - usermod -a -G <group-name>
 
 
 

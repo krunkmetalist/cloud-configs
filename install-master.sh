@@ -52,8 +52,6 @@ sudo systemctl enable --now kubelet
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
 kubernetesVersion: v1.30.1
-networking:
-  podSubnet: "192.168.0.0/16"
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1

@@ -138,7 +138,7 @@ Linux COMMANDS:
             - 'kubeadm'
                 - if it worked you'll see a list of options printed to the screen.
 
-        - update a users password
+        - update a user's password
             - as root:
                 - 'passwd <username>'
 
@@ -146,6 +146,18 @@ Linux COMMANDS:
             - as root:
                 - usermod -a -G <group-name>
 
+OPENSSH:
+
+    - to copy a public key, to say a new vm, so you don't have to type in a password:
+
+            """
+            OpenSSH comes with a command to do this, ssh-copy-id. You just give it the remote address, and it adds your public key to the authorized_keys file on the remote machine:
+
+            $ ssh-copy-id you@just.some.other.server
+            You may need to use the -i flag to locate your public key on your local machine:
+
+            $ ssh-copy-id -i ~/.ssh/id_rsa.pub you@just.some.other.server
+            """
 
 
 

@@ -3,7 +3,7 @@
 # intended to be used from a local devops env, not from a node.
 
 # List of VM IP addresses or hostnames
-VMS=("137.184.34.222" "159.223.202.227" "146.190.54.62")
+IP_FILE=("ips.txt")
 
 # Path to the public key
 PUBLIC_KEY_PATH="$HOME/.ssh/id_rsa.pub"
@@ -27,10 +27,10 @@ add_ssh_key() {
   fi
 }
 
-# Iterate over each VM and add the SSH key
-for vm in "${VMS[@]}"; do
-  add_ssh_key "$vm" &
-done
+# Read the IP file line by line
+while IFS= read -r ip; do
+  open_terminal_tab "$ip"
+done < "$IP_FILE"
 
 wait
 echo "SSH key addition complete."

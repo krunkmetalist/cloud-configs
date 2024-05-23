@@ -52,6 +52,8 @@ sudo systemctl enable --now kubelet
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
 kubernetesVersion: v1.30.1
+networking:
+  podSubnet: "192.168.0.0/16"
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
@@ -64,7 +66,6 @@ systemctl restart containerd
 # ---- kubeadm init ----
 echo 'deploying kubernetes (with canal)...'
 kubeadm init --config kubeadm-config.yaml
-# without podSubnet: 'sudo kubeadm init --pod-network-cidr=192.168.0.0/16'
 
 export KUBECONFIG=/etc/kubernetes/admin.conf # if root
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O

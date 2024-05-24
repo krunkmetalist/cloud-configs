@@ -22,8 +22,6 @@
 
 # List of IP addresses
 IP_FILE=("/users/nathanreboiro/cloud-configs/local-scripts/ips.txt")
-# Remote repository
-REPO_URL="git@github.com:krunkmetalist/cloud-configs.git"
 
 # check for feeder file
 if [ ! -f "$IP_FILE" ]; then

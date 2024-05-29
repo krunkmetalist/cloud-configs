@@ -19,6 +19,7 @@
 # before running the 'add keys' script, you should generate a keypair, present in ~/.ssh.:
 # open a terminal and issue the command: 'ssh-keygen -t rsa', enter through without a passphrase.
 # 'ls ~/.ssh', you should see two keys.
+# copy the public key, add it to your SCM portal, under 'settings' > 'ssh keys'.
 
 # List of IP addresses
 IP_FILE=("/users/nathanreboiro/cloud-configs/local-scripts/ips.txt")

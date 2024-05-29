@@ -1,0 +1,32 @@
+ To establish connections between all required infrastructure pieces, we need to set up some ssh keys.
+ This document goes over the different scopes and how they impact the functionality of this script suite.
+
+creating keys:
+
+This subject is remedial, but I'll cover it briefly nonetheless. In the words of a much better dev than myself : "101 is down the hall..." - J.W.
+In some cases you might need a specific cryptographic algorithm for the service you're working with. I always use rsa, and it hasn't been an issue yet.
+
+Some tips:
+- don't enter a passphrase when creating keys, you WILL forget it and have to start all over again.
+
+ SCOPES:
+
+ 1: local
+    - you local machine must have a PUBLIC key on it that you can copy to the cloud node.
+        - You'll also need this PUBLIC key added to your SCM host.
+
+2: cloud/local node machine
+    - The scripts need to be able to auth with the nodes.
+    - We have a script that will copy the public key to the different nodes.
+
+3: SCM
+    - keys from the local development machine and from the cloud nodes need to be added to the SCM settings for your user.
+    - without them, you won't be able to pull down the 'cloud-configs' repo we're working with.
+        - I suppose you could use an app pass(bitbucket) in conjunction with https, but why would you?
+            - ssh is more gooder. (<--sarcasm)
+            - seriously though, basic auth for most cloud-based SCM providers has been deprecated.
+            - Tokens are also an option.
+
+4: CI servers
+    - in the future we will need valid keys to allow Jenkins to call things on our behalf.
+    - keys can be added to the jenkins configuration

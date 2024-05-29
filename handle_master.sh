@@ -1,5 +1,12 @@
-SCRIPT_PATH1="./install-master.sh"
-SCRIPT_PATH2="./create-master-user.sh"
-"$SCRIPT_PATH1"
+# this script assumes you've already added ssh keys to your targets.
+
+INSTALL_MASTER="./install_master.sh"
+CREATE_MASTER_USER="./create_master_user.sh"
+
+"$INSTALL_MASTER"
+
 sleep 3
-"$SCRIPT_PATH2"
+
+"$CREATE_MASTER_USER" # requires files produced by the install script, so it goes second.
+
+

@@ -31,9 +31,10 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 DIR=/etc/apt/keyrings
 
 if [[ ! -e $DIR ]]; then
+    echo "$DIR did not exist exists, creating it now..." 1>&2
     sudo mkdir -p -m 755 $DIR
 elif [[ ! -d $DIR ]]; then
-    echo "$DIR already exists but is not a directory" 1>&2
+    echo "$DIR already exists but is not a directory..." 1>&2
 fi
 
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg

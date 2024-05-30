@@ -78,8 +78,8 @@ apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd' > kubeadm-config.yaml
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
-echo "SystemdCgroup = true" > /etc/containerd/config.toml # fix toml!
-systemctl restart containerd
+#echo "SystemdCgroup = true" > /etc/containerd/config.toml # fix toml!
+#systemctl restart containerd
 
 # ---- install CRICTL ----
 VERSION="v1.22.0"

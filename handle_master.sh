@@ -3,11 +3,16 @@
 
 INSTALL_MASTER="./install_master.sh"
 CREATE_MASTER_USER="./create_master_user.sh"
+POST_CREATE_USER="./post_create_master_user.sh"
+
+"$CREATE_MASTER_USER"
+
+sleep 3
 
 "$INSTALL_MASTER"
 
 sleep 3
 
-"$CREATE_MASTER_USER" # requires files produced by the install script, so it goes second.
+"$POST_CREATE_USER"
 
 

@@ -72,15 +72,15 @@ sudo systemctl enable --now kubelet
 # ---- configure kubeadm ----
 # NOTE: 'kubernetesVersion' will need to be updated manually to match what got pulled, see version skew policy.
 # https://kubernetes.io/releases/version-skew-policy/#supported-versions
-echo 'kind: ClusterConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
-kubernetesVersion: v1.30.0
-networking:
-  podSubnet: "192.168.0.0/16"
----
-kind: KubeletConfiguration
-apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: systemd' > kubeadm-config.yaml
+#echo 'kind: ClusterConfiguration
+#apiVersion: kubeadm.k8s.io/v1beta3
+#kubernetesVersion: v1.30.0
+#networking:
+#  podSubnet: "192.168.0.0/16"
+#---
+#kind: KubeletConfiguration
+#apiVersion: kubelet.config.k8s.io/v1beta1
+#cgroupDriver: systemd' > kubeadm-config.yaml
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
 #echo "SystemdCgroup = true" > /etc/containerd/config.toml # fix toml!
@@ -97,16 +97,13 @@ export IMAGE_SERVICE_ENDPOINT=unix:///var/run/containerd/containerd.sock
 
 # ---- kubeadm init ----
 echo 'deploying kubernetes...'
+# you can use the pod network flag, or the config, but you can't use both.
+# this cannot be the final solution. we need to lock down versions, which requires a config.
+# per this issue:
+# we might not be able to control the main k8s version even with podSubnet defined. Which causes issues standing up the CNI for the CRI instances.
 kubeadm init --pod-network-cidr=10.244.0.0/16
 mkdir -p "$HOME"/.kube
 sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
 sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
-
 export KUBECONFIG=/etc/kubernetes/admin.conf # if root
-
-# so, canal was a massive flop. going to try the plain CIDR approach,
-# but if i do that i cant control the k8s version....hmmm...
-#curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/canal.yaml -O
-#kubectl apply -f canal.yaml
-
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

@@ -73,7 +73,7 @@ sudo systemctl enable --now kubelet
 # https://kubernetes.io/releases/version-skew-policy/#supported-versions
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-kubernetesVersion: v1.30.1
+kubernetesVersion: v1.30.0
 networking:
   podSubnet: "192.168.0.0/16"
 ---
@@ -86,19 +86,18 @@ cgroupDriver: systemd' > kubeadm-config.yaml
 #systemctl restart containerd
 
 # ---- install CRICTL ----
-VERSION="v1.30.0"
-wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
-sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
-rm -f crictl-$VERSION-linux-amd64.tar.gz
+wget https://github.com/kubernetes-sigs/cri-tools/releases/tag/v1.30.0
+sudo tar zxvf crictl-v1.30.0-darwin-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-v1.30.0-darwin-amd64.tar.gz # remove after copy
 
 # ---- kubeadm init ----
 echo 'deploying kubernetes...'
 kubeadm init --pod-network-cidr=10.244.0.0/16
 mkdir -p "$HOME"/.kube
-$ sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
-$ sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
+sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
 
-#export KUBECONFIG=/etc/kubernetes/admin.conf # if root
+export KUBECONFIG=/etc/kubernetes/admin.conf # if root
 
 # so, canal was a massive flop. going to try the plain CIDR approach,
 # but if i do that i cant control the k8s version....hmmm...

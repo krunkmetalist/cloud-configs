@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # ---- install containerd CRI ----
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
   overlay
@@ -13,7 +15,6 @@ cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
 EOF
 # Apply sysctl params without reboot
 sudo sysctl --system
-
 
 # ---- install docker ----
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
@@ -89,6 +90,10 @@ cgroupDriver: systemd' > kubeadm-config.yaml
 wget https://github.com/kubernetes-sigs/cri-tools/releases/tag/v1.30.0
 sudo tar zxvf crictl-v1.30.0-darwin-amd64.tar.gz -C /usr/local/bin
 rm -f crictl-v1.30.0-darwin-amd64.tar.gz # remove after copy
+
+# set env vars for crictl
+export CONTAINER_RUNTIME_ENDPOINT=unix:///var/run/containerd/containerd.sock
+export IMAGE_SERVICE_ENDPOINT=unix:///var/run/containerd/containerd.sock
 
 # ---- kubeadm init ----
 echo 'deploying kubernetes...'

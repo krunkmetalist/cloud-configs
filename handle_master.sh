@@ -1,3 +1,4 @@
+#!/bin/bash
 # this script assumes you've already added ssh keys to your targets.
 
 INSTALL_MASTER="./install_master.sh"

@@ -84,7 +84,8 @@ sudo systemctl enable --now kubelet
 
 # ---- containerd config to work with Kubernetes >=1.26 ----
 #echo "SystemdCgroup = true" > /etc/containerd/config.toml # fix toml!
-#systemctl restart containerd
+rm /etc/containerd/config.toml
+systemctl restart containerd
 
 # ---- install CRICTL ----
 wget https://github.com/kubernetes-sigs/cri-tools/releases/tag/v1.30.0
@@ -94,16 +95,3 @@ rm -f crictl-v1.30.0-darwin-amd64.tar.gz # remove after copy
 # set env vars for crictl
 export CONTAINER_RUNTIME_ENDPOINT=unix:///var/run/containerd/containerd.sock
 export IMAGE_SERVICE_ENDPOINT=unix:///var/run/containerd/containerd.sock
-
-# ---- kubeadm init ----
-echo 'deploying kubernetes...'
-# you can use the pod network flag, or the config, but you can't use both.
-# this cannot be the final solution. we need to lock down versions, which requires a config.
-# per this issue:
-# we might not be able to control the main k8s version even with podSubnet defined. Which causes issues standing up the CNI for the CRI instances.
-kubeadm init --pod-network-cidr=10.244.0.0/16
-mkdir -p "$HOME"/.kube
-sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
-sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
-export KUBECONFIG=/etc/kubernetes/admin.conf # if root
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

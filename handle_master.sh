@@ -4,15 +4,15 @@
 INSTALL_MASTER="./install_master.sh"
 CREATE_MASTER_USER="./create_master_user.sh"
 POST_CREATE_USER="./post_create_master_user.sh"
+KUBE_INIT="./kubeadm_init.sh"
 
+# Step 1
 "$CREATE_MASTER_USER"
 
-sleep 3
-
+# step 2
 "$INSTALL_MASTER"
 
-sleep 3
-
+# step 3
 "$POST_CREATE_USER"
 
 

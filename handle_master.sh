@@ -8,7 +8,7 @@ POST_CREATE_USER="./post_create_admin_user.sh"
 KUBE_INIT="./kubeadm_init.sh"
 
 # step
-"$INSTALL_CONTAINERD_CRI"
+#"$INSTALL_CONTAINERD_CRI"
 
 # Step
 "$CREATE_MASTER_USER"

@@ -43,7 +43,8 @@ elif [[ ! -d $DIR ]]; then
     printf "\n\n"
 fi
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# update version when it changes. or get this cluster up and use helm. probably the best approach.
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29.0/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -102,11 +103,11 @@ imports = ["/etc/containerd/runtime_*.toml", "./debug.toml"]
 ' > /etc/containerd/config.toml
 systemctl restart containerd
 
-# ---- install CRICTL ----
-wget https://github.com/kubernetes-sigs/cri-tools/releases/tag/v1.30.0
-sudo tar zxvf crictl-v1.30.0-darwin-amd64.tar.gz -C /usr/local/bin
-rm -f crictl-v1.30.0-darwin-amd64.tar.gz # remove after copy
-
-# set env vars for crictl
-export CONTAINER_RUNTIME_ENDPOINT=unix:///var/run/containerd/containerd.sock
-export IMAGE_SERVICE_ENDPOINT=unix:///var/run/containerd/containerd.sock
+## ---- install CRICTL ----
+#wget https://github.com/kubernetes-sigs/cri-tools/releases/tag/v1.30.0
+#sudo tar zxvf crictl-v1.30.0-darwin-amd64.tar.gz -C /usr/local/bin
+#rm -f crictl-v1.30.0-darwin-amd64.tar.gz # remove after copy
+#
+## set env vars for crictl
+#export CONTAINER_RUNTIME_ENDPOINT=unix:///var/run/containerd/containerd.sock
+#export IMAGE_SERVICE_ENDPOINT=unix:///var/run/containerd/containerd.sock

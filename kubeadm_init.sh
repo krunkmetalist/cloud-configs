@@ -2,9 +2,10 @@
 # ---- configure kubeadm ----
 # NOTE: 'kubernetesVersion' will need to be updated manually to match what got pulled, see version skew policy.
 # https://kubernetes.io/releases/version-skew-policy/#supported-versions
+# 1.30.0 might be too new. switching to 1.28.0,
 echo 'kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-kubernetesVersion: v1.30.0
+kubernetesVersion: v1.29.0
 networking:
   podSubnet: "192.168.0.0/16"
 ---

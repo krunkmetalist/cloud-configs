@@ -3,7 +3,7 @@
 # intended to be used from a local devops env, not from a node.
 
 # List of VM IP addresses or hostnames
-IP_FILE=("ips.txt")
+IP_FILE=("../ips.txt")
 
 # Path to the public key
 PUBLIC_KEY_PATH="$HOME/.ssh/id_rsa.pub"
@@ -29,7 +29,7 @@ add_ssh_key() {
 
 # Read the IP file line by line
 while IFS= read -r ip; do
-  open_terminal_tab "$ip"
+  add_ssh_key "$ip"
 done < "$IP_FILE"
 
 wait

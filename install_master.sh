@@ -1,21 +1,5 @@
 #!/bin/bash
 
-# ---- install containerd CRI ----
-cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
-  overlay
-  br_netfilter
-EOF
-sudo modprobe overlay
-sudo modprobe
-# Setup required sysctl params, these persist across reboots
-cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
-  net.bridge.bridge-nf-call-iptables  = 1
-  net.ipv4.ip_forward                 = 1
-  net.bridge.bridge-nf-call-ip6tables = 1
-EOF
-# Apply sysctl params without reboot
-sudo sysctl --system
-
 # ---- install docker ----
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
@@ -69,22 +53,53 @@ sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
 
-# ---- configure kubeadm ----
-# NOTE: 'kubernetesVersion' will need to be updated manually to match what got pulled, see version skew policy.
-# https://kubernetes.io/releases/version-skew-policy/#supported-versions
-#echo 'kind: ClusterConfiguration
-#apiVersion: kubeadm.k8s.io/v1beta3
-#kubernetesVersion: v1.30.0
-#networking:
-#  podSubnet: "192.168.0.0/16"
-#---
-#kind: KubeletConfiguration
-#apiVersion: kubelet.config.k8s.io/v1beta1
-#cgroupDriver: systemd' > kubeadm-config.yaml
-
 # ---- containerd config to work with Kubernetes >=1.26 ----
 #echo "SystemdCgroup = true" > /etc/containerd/config.toml # fix toml!
 rm /etc/containerd/config.toml
+echo '
+version = 2
+
+root = "/var/lib/containerd"
+state = "/run/containerd"
+oom_score = 0
+imports = ["/etc/containerd/runtime_*.toml", "./debug.toml"]
+
+[grpc]
+  address = "/run/containerd/containerd.sock"
+  uid = 0
+  gid = 0
+
+[debug]
+  address = "/run/containerd/debug.sock"
+  uid = 0
+  gid = 0
+  level = "info"
+
+[metrics]
+  address = ""
+  grpc_histogram = false
+
+[cgroup]
+  path = ""
+
+[plugins]
+  [plugins."io.containerd.monitor.v1.cgroups"]
+    no_prometheus = false
+  [plugins."io.containerd.service.v1.diff-service"]
+    default = ["walking"]
+  [plugins."io.containerd.gc.v1.scheduler"]
+    pause_threshold = 0.02
+    deletion_threshold = 0
+    mutation_threshold = 100
+    schedule_delay = 0
+    startup_delay = "100ms"
+  [plugins."io.containerd.runtime.v2.task"]
+    platforms = ["linux/amd64"]
+    sched_core = true
+  [plugins."io.containerd.service.v1.tasks-service"]
+    blockio_config_file = ""
+    rdt_config_file = ""
+' > /etc/containerd/config.toml
 systemctl restart containerd
 
 # ---- install CRICTL ----

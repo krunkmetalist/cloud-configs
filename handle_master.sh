@@ -1,18 +1,22 @@
 #!/bin/bash
 # this script assumes you've already added ssh keys to your targets.
 
+INSTALL_CONTAINERD_CRI="./install_containerd_cri.sh"
 INSTALL_MASTER="./install_master.sh"
-CREATE_MASTER_USER="./create_master_user.sh"
-POST_CREATE_USER="./post_create_master_user.sh"
+CREATE_MASTER_USER="./create_admin_user.sh"
+POST_CREATE_USER="./post_create_admin_user.sh"
 KUBE_INIT="./kubeadm_init.sh"
 
-# Step 1
+# step
+"$INSTALL_CONTAINERD_CRI"
+
+# Step
 "$CREATE_MASTER_USER"
 
-# step 2
+# step
 "$INSTALL_MASTER"
 
-# step 3
+# step
 "$POST_CREATE_USER"
 
 

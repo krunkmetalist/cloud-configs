@@ -13,7 +13,7 @@ if (-not (Test-Path $PUBLIC_KEY_PATH)) {
 $PUBLIC_KEY = Get-Content $PUBLIC_KEY_PATH
 
 # Function to add SSH key to a VM
-function Add-SSHKey {
+function Add-SSHKey-From-Dev-Box-To-Node {
     param (
         [string]$vm
     )
@@ -27,7 +27,7 @@ function Add-SSHKey {
 
 # Read the IP file line by line
 foreach ($ip in Get-Content $ipFile) {
-    Add-SSHKey $ip
+    Add-SSHKey-From-Dev-Box-To-Node $ip
 }
 
 Write-Host "SSH key addition complete."
